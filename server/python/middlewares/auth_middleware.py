@@ -6,7 +6,6 @@ import jwt
 
 
 def authenticate_request(func):
-    print("in Wrapper")
 
     @wraps(func)
     def wrapper(*args, **kwargs):

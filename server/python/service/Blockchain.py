@@ -78,31 +78,3 @@ class Blockchain:
                 if voted_candidate_id == candidate_id:
                     vote_count += 1
         return vote_count
-
-
-# # Example usage
-# with app.app_context():
-#     db.create_all()
-
-# blockchain = Blockchain()
-
-# # Add candidates
-# candidate1 = Candidate(name="Candidate 1", description="Description for Candidate 1")
-# candidate2 = Candidate(name="Candidate 2", description="Description for Candidate 2")
-# db.session.add(candidate1)
-# db.session.add(candidate2)
-# db.session.commit()
-
-# # Cast votes
-# blockchain.vote("123456789", "John Doe", "1990-05-15", candidate1.id)
-# blockchain.vote("987654321", "Jane Smith", "1985-10-22", candidate2.id)
-
-# # Try to vote again (should fail)
-# blockchain.vote("123456789", "John Doe", "1990-05-15", candidate2.id)
-
-# # Get vote counts
-# candidate1_vote_count = blockchain.get_candidate_vote_count(candidate1.id)
-# candidate2_vote_count = blockchain.get_candidate_vote_count(candidate2.id)
-
-# print(f"Votes for {candidate1.name}: {candidate1_vote_count}")
-# print(f"Votes for {candidate2.name}: {candidate2_vote_count}")

@@ -33,6 +33,39 @@ def get_candidates():
         return jsonify(parse_error(e)), 500
 
 
+@voter_resource.route("/candidate", methods=["POST"])
+@authenticate_request
+def add_candidate():
+    try:
+        data = request.json
+        if not all(key in data for key in ["name", "level"]):
+            return jsonify({"message": "Missing data"}), 400
+
+        new_candidate = Candidate(name=data["name"], level=data["level"])
+
+        db.session.add(new_candidate)
+        db.session.commit()
+
+        return (
+            jsonify(
+                {
+                    "message": "Candidate added successfully",
+                    "candidate": new_candidate.json(),
+                }
+            ),
+            201,
+        )
+
+    except Exception as e:
+        db.session.rollback()  # Rollback changes in case of error
+        return (
+            jsonify(
+                {"message": "Error occurred while adding candidate", "error": str(e)}
+            ),
+            500,
+        )
+
+
 @voter_resource.route("/vote", methods=["POST"])
 @authenticate_request
 def add_vote():
@@ -41,6 +74,11 @@ def add_vote():
         user = User.query.get(request.user_id)
 
         candidate_id = data.get("candidate_id")
+
+        candidate = Candidate.query.get(candidate_id)
+
+        if not candidate:
+            return jsonify({"error": "Invalid candidate_id"}), 400
 
         if not user.getSSN() or not candidate_id:
             return jsonify({"error": "Invalid request data"}), 400
