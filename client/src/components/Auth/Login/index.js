@@ -46,13 +46,14 @@ const Login = ({ ShowPopupData, LoginData }) => {
                 </Typography>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <TextField
-                        id="email"
-                        label="Email"
-                        type="email"
+                        id="ssn"
+                        label="SSN"
+                        type="ssn"
                         fullWidth
+                        defaultValue="123456789"
                         margin="normal"
                         required
-                        {...register("email")}
+                        {...register("ssn")}
                     />
                     <TextField
                         id="password"
@@ -60,6 +61,7 @@ const Login = ({ ShowPopupData, LoginData }) => {
                         type="password"
                         fullWidth
                         margin="normal"
+                        defaultValue="Qwe@12345"
                         required
                         {...register("password")}
                     />

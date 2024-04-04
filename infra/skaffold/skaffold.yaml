@@ -6,6 +6,10 @@ kind: Config
     - &MIGRATE
       image: rishabh75/trustvote-internal-migration
       context: ../../server/node
+      sync:
+        manual:
+          - src: db/**/*.js
+            dest: .
       docker:
         dockerfile: ../Dockerfiles/Dockerfile.migrate
     - &USER

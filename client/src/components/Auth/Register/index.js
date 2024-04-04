@@ -73,6 +73,7 @@ const Register = ({ ShowPopupData, LoginData }) => {
                         label="First Name"
                         fullWidth
                         margin="normal"
+                        defaultValue="First"
                         required
                         {...register("firstName")}
                     />
@@ -81,8 +82,37 @@ const Register = ({ ShowPopupData, LoginData }) => {
                         label="Last Name"
                         fullWidth
                         margin="normal"
+                        defaultValue="Last Name"
                         required
                         {...register("lastName")}
+                    />
+                    <TextField
+                        id="state"
+                        label="State"
+                        fullWidth
+                        margin="normal"
+                        defaultValue="NY"
+                        required
+                        {...register("state")}
+                    />
+                    <TextField
+                        id="city"
+                        label="City"
+                        fullWidth
+                        margin="normal"
+                        defaultValue="Binghamton"
+                        required
+                        {...register("city")}
+                    />
+                    <TextField
+                        id="ssn"
+                        label="SSN"
+                        type="number"
+                        fullWidth
+                        margin="normal"
+                        defaultValue="123456789"
+                        required
+                        {...register("ssn")}
                     />
                     <TextField
                         id="email"
@@ -90,6 +120,7 @@ const Register = ({ ShowPopupData, LoginData }) => {
                         type="email"
                         fullWidth
                         margin="normal"
+                        defaultValue="rishabh@gmail.com"
                         required
                         {...register("email")}
                     />
@@ -99,6 +130,7 @@ const Register = ({ ShowPopupData, LoginData }) => {
                         type="password"
                         fullWidth
                         margin="normal"
+                        defaultValue="Qwe@12345"
                         required
                         {...register("password")}
                     />
@@ -109,6 +141,7 @@ const Register = ({ ShowPopupData, LoginData }) => {
                         fullWidth
                         margin="normal"
                         required
+                        defaultValue="Qwe@12345"
                         {...register(
                             "confirmPassword",
                             passwordMatchValidation,

@@ -100,10 +100,10 @@ COMPONENT_DEFINITION:
     resources:
       requests:
         cpu: "1"
-        memory: "1000Mi"
+        memory: "2000Mi"
       limits:
         cpu: "1"
-        memory: "1000Mi"
+        memory: "2000Mi"
     service:
       port: 3000
     env:
@@ -247,21 +247,21 @@ INGRESS_DEFINITION: &INGRESS_DEFINITION
             serviceName: client-svc
             servicePort: 3000
 
-jobs:
-  - name: internal-migration
-    completions: 1
-    backoffLimit: 1
-    image: rishabh75/trustvote-internal-migration
-    resources:
-      requests:
-        cpu: "1"
-        memory: "500Mi"
-      limits:
-        cpu: "1"
-        memory: "500Mi"
-    env:
-      MODE: "server"
-      SERVER_TYPE: "internal"
+# jobs:
+#   - name: internal-migration
+#     completions: 1
+#     backoffLimit: 1
+#     image: rishabh75/trustvote-internal-migration
+#     resources:
+#       requests:
+#         cpu: "1"
+#         memory: "500Mi"
+#       limits:
+#         cpu: "1"
+#         memory: "500Mi"
+#     env:
+#       MODE: "server"
+#       SERVER_TYPE: "internal"
 
 volumes:
   - name: postgres

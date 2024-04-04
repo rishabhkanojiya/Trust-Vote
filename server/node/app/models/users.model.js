@@ -28,14 +28,25 @@ class UserModel extends Model {
     static get jsonSchema() {
         return {
             type: "object",
-            required: ["firstName", "lastName", "email", "password"],
+            required: [
+                "firstName",
+                "lastName",
+                "state",
+                "city",
+                "ssn",
+                "email",
+                "password",
+            ],
 
             properties: {
                 _id: { type: "number" },
-                firstName: { type: "string", minLength: 1, maxLength: 255 },
-                lastName: { type: "string", minLength: 1, maxLength: 255 },
+                firstName: { type: "string" },
+                lastName: { type: "string" },
+                state: { type: "string" },
+                city: { type: "string" },
+                ssn: { type: "string", minLength: 9 },
                 email: { type: "string", maxLength: 255 },
-                password: { type: "string", minLength: 6 },
+                password: { type: "string", minLength: 5 },
                 createdAt: { type: "string" },
                 updatedAt: { type: "string" },
             },
@@ -57,12 +68,15 @@ class UserModel extends Model {
             return await this.query().insertAndFetch({
                 firstName: user.firstName,
                 lastName: user.lastName,
+                state: user.state,
+                city: user.city,
+                ssn: user.ssn,
                 email: user.email,
                 password: user.password,
             });
         } catch (err) {
             if (err.name === "UniqueViolationError") {
-                throw new AlreadyExistError("Email or Number Already exists");
+                throw new AlreadyExistError("SSN Already exists");
             }
             throw err;
         }
@@ -79,6 +93,8 @@ class UserModel extends Model {
             return await this.query().patchAndFetchById(userId, {
                 firstName: user.firstName,
                 lastName: user.lastName,
+                state: user.state,
+                city: user.city,
             });
         } catch (err) {
             throw err;
@@ -91,6 +107,11 @@ class UserModel extends Model {
 
     static async getUserById(userId) {
         const user = await this.query().findById(userId);
+        return { user: omitPassword(user) };
+    }
+
+    static async getUserBySSN(ssn) {
+        const user = await this.query().findOne({ ssn });
         return { user: omitPassword(user) };
     }
 
@@ -115,21 +136,26 @@ class UserModel extends Model {
 
     static async registerUser(userData) {
         try {
-            const { firstName, lastName, email, password } = userData;
+            const { firstName, lastName, email, state, city, ssn, password } =
+                userData;
 
+            console.log(userData);
             const hashedPassword = await bcrypt.hash(password, 10);
 
             const user = await this.query().insert({
                 firstName,
                 lastName,
+                state,
+                city,
                 email,
+                ssn,
                 password: hashedPassword,
             });
 
             return omitPassword(user);
         } catch (err) {
             if (err.name === "UniqueViolationError") {
-                throw new AlreadyExistError("Email Already exists");
+                throw new AlreadyExistError("ssn Already exists");
             }
             throw err;
         }
@@ -137,12 +163,12 @@ class UserModel extends Model {
 
     static async loginUser(userData) {
         try {
-            const { email, password } = userData;
+            const { ssn, password } = userData;
 
-            const user = await this.query().findOne({ email });
+            const user = await this.query().findOne({ ssn });
 
             if (!user || !(await bcrypt.compare(password, user.password))) {
-                throw new UnauthorizedError("Invalid email or password.");
+                throw new UnauthorizedError("Invalid ssn or password.");
             }
 
             const token = jwt.sign({ userId: user._id }, conf.jwtSecret, {
@@ -162,7 +188,7 @@ class UserModel extends Model {
             const user = await UserModel.query().findOne({ email });
 
             if (!user) {
-                throw new UnauthorizedError("Invalid email or password.");
+                throw new UnauthorizedError("Invalid email.");
             }
 
             const token = jwt.sign({ userId: user._id }, conf.jwtSecret, {

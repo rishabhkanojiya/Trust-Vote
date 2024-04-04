@@ -76,10 +76,12 @@ const UsersHandler = {
     createUser: async (req, res) => {
         // const { _id: userId } = req.user;
         const data = {
-            // userId,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
+            state: req.body.state,
+            city: req.body.city,
             email: req.body.email,
+            ssn: req.body.ssn,
             password: req.body.password,
         };
 
@@ -103,6 +105,8 @@ const UsersHandler = {
         const data = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
+            state: req.body.state,
+            city: req.body.city,
         };
 
         const { userId } = req;
@@ -128,7 +132,10 @@ const UsersHandler = {
             const data = {
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
+                state: req.body.state,
+                city: req.body.city,
                 email: req.body.email,
+                ssn: req.body.ssn,
                 password: req.body.password,
             };
 
@@ -143,7 +150,7 @@ const UsersHandler = {
     loginUser: async (req, res) => {
         try {
             const data = {
-                email: req.body.email,
+                ssn: req.body.ssn,
                 password: req.body.password,
             };
 

@@ -96,3 +96,4 @@ dump.rdb
 app/server/models/swagger/**/*.yaml
 
 tmp/
+generated.yaml
