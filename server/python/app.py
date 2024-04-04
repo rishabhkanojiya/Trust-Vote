@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
-from resources.voter import voter_resource
+from resources.vote import voter_resource
 from config import POSTGRES_TRUST_VOTE_READ_WRITE
 
 

@@ -17,8 +17,7 @@ def authenticate_request(func):
                 return parse_error("Access denied | Please Login Again")
 
             decoded = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-            print(decoded)
-            request.user_id = decoded.get("user_id")
+            request.user_id = decoded.get("userId")
         except jwt.ExpiredSignatureError:
             return parse_error("Token has expired")
         except jwt.InvalidTokenError:

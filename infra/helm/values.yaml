@@ -150,7 +150,7 @@ INGRESS_DEFINITION: &INGRESS_DEFINITION
             backend:
               serviceName: test-svc
               servicePort: 9069
-          - path: /api/python/?(.*)
+          - path: /api/voting/?(.*)
             pathType: ImplementationSpecific
             backend:
               serviceName: python-svc
