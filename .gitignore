@@ -98,3 +98,5 @@ app/server/models/swagger/**/*.yaml
 tmp/
 generated.yaml
 __pycache__
+.env
+.env.*

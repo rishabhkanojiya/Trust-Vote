@@ -21,6 +21,15 @@ kind: Config
             dest: .
       docker:
         dockerfile: ../Dockerfiles/Dockerfile.main
+    - &TRENDING
+      image: rishabh75/trustvote-trending
+      context: ../../server/trending
+      sync:
+        manual:
+          - src: src/**/*.js
+            dest: .
+      docker:
+        dockerfile: ../Dockerfiles/Dockerfile.main
     - &VOTING
       image: rishabh75/trustvote-python
       context: ../../server/python
@@ -70,23 +79,26 @@ kind: Config
     DEFAULT_ARTIFACTS: &DEFAULT_ARTIFACTS
       - *MIGRATE
       - *USER
+      - *TRENDING
       - *VOTING
-      - *EMAIL
-      - *CRON
+      # - *EMAIL
+      # - *CRON
       - *CLIENT
     DEV_ARTIFACTS: &DEV_ARTIFACTS
       - *MIGRATE
       - *USER
+      - *TRENDING
       - *VOTING
-      - *EMAIL
-      - *CRON
+      # - *EMAIL
+      # - *CRON
       - *CLIENT
     PROD_ARTIFACTS: &PROD_ARTIFACTS
       - *MIGRATE
       - *USER
+      - *TRENDING
       - *VOTING
-      - *EMAIL
-      - *CRON
+      # - *EMAIL
+      # - *CRON
       - *CLIENT-PROD
 
 .HOOKS: &HOOKS

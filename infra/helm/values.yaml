@@ -23,22 +23,22 @@ COMPONENT_DEFINITION:
       path: /var/lib/postgresql/data
       subPath: postgres
       claimName: postgres-pvc
-  - &EMAIL-REDIS
-    name: email-redis
-    replicaCount: 1
-    image:
-      repository: redis
-      tag: latest
-    resources:
-      requests:
-        cpu: "1"
-        memory: "500Mi"
-      limits:
-        cpu: "1"
-        memory: "500Mi"
-    service:
-      name: "caching"
-      port: 6379
+  # - &EMAIL-REDIS
+  #   name: email-redis
+  #   replicaCount: 1
+  #   image:
+  #     repository: redis
+  #     tag: latest
+  #   resources:
+  #     requests:
+  #       cpu: "1"
+  #       memory: "500Mi"
+  #     limits:
+  #       cpu: "1"
+  #       memory: "500Mi"
+  #   service:
+  #     name: "caching"
+  #     port: 6379
   - &USER
     name: user
     replicaCount: 1
@@ -57,11 +57,11 @@ COMPONENT_DEFINITION:
     env:
       MODE: "server"
       SERVER_TYPE: "USER"
-  - &EMAIL
-    name: email
+  - &TRENDING
+    name: trending
     replicaCount: 1
     image:
-      repository: rishabh75/trustvote-email
+      repository: rishabh75/trustvote-trending
       tag: latest
     resources:
       requests:
@@ -70,12 +70,27 @@ COMPONENT_DEFINITION:
       limits:
         cpu: "1"
         memory: "500Mi"
-    env:
-      MODE: "worker"
-      SERVER_TYPE: "email"
-      WORKER_TYPE: "email"
-      QUEUE_NAME: "EMAIL_WORKER_QUEUE_1"
-      WORKER_CONCURRENCY: "5"
+    service:
+      port: 9069
+  # - &EMAIL
+  #   name: email
+  #   replicaCount: 1
+  #   image:
+  #     repository: rishabh75/trustvote-email
+  #     tag: latest
+  #   resources:
+  #     requests:
+  #       cpu: "1"
+  #       memory: "500Mi"
+  #     limits:
+  #       cpu: "1"
+  #       memory: "500Mi"
+  #   env:
+  #     MODE: "worker"
+  #     SERVER_TYPE: "email"
+  #     WORKER_TYPE: "email"
+  #     QUEUE_NAME: "EMAIL_WORKER_QUEUE_1"
+  #     WORKER_CONCURRENCY: "5"
   - &PYTHON
     name: python
     replicaCount: 1
@@ -154,6 +169,11 @@ INGRESS_DEFINITION: &INGRESS_DEFINITION
             pathType: ImplementationSpecific
             backend:
               serviceName: python-svc
+              servicePort: 9069
+          - path: /api/trending/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: trending-svc
               servicePort: 9069
           - path: /?(.*)
             pathType: ImplementationSpecific
@@ -241,6 +261,11 @@ INGRESS_DEFINITION: &INGRESS_DEFINITION
           backend:
             serviceName: python-svc
             servicePort: 9069
+        - path: /api/trending/?(.*)
+          pathType: ImplementationSpecific
+          backend:
+            serviceName: trending-svc
+            servicePort: 9069
         - path: /?(.*)
           pathType: ImplementationSpecific
           backend:
@@ -267,40 +292,43 @@ volumes:
   - name: postgres
     storage: 1Gi
 
-cronJobs:
-  - name: email-cron-job
-    schedule: "*/30 * * * *"
-    successfulJobsHistoryLimit: 3
-    failedJobsHistoryLimit: 1
-    concurrencyPolicy: "Forbid"
-    image: rishabh75/trustvote-email-cron
-    resources:
-      requests:
-        cpu: "1"
-        memory: "500Mi"
-      limits:
-        cpu: "1"
-        memory: "500Mi"
+# cronJobs:
+#   - name: email-cron-job
+#     schedule: "*/30 * * * *"
+#     successfulJobsHistoryLimit: 3
+#     failedJobsHistoryLimit: 1
+#     concurrencyPolicy: "Forbid"
+#     image: rishabh75/trustvote-email-cron
+#     resources:
+#       requests:
+#         cpu: "1"
+#         memory: "500Mi"
+#       limits:
+#         cpu: "1"
+#         memory: "500Mi"
 
 COMMON_COMPONENTS: &COMMON_COMPONENTS
   - *INTERNAL-POSTGRES
-  - *EMAIL-REDIS
+  # - *EMAIL-REDIS
   - *USER
-  - *EMAIL
+  - *TRENDING
+  # - *EMAIL
   - *PYTHON
 
 DEV_COMPONENTS: &DEV_COMPONENTS
   - *INTERNAL-POSTGRES
-  - *EMAIL-REDIS
+  # - *EMAIL-REDIS
   - *USER
-  - *EMAIL
+  - *TRENDING
+  # - *EMAIL
   - *PYTHON
   - *CLIENT
 
 PROD_COMPONENTS: &PROD_COMPONENTS
   - *INTERNAL-POSTGRES
-  - *EMAIL-REDIS
+  # - *EMAIL-REDIS
   - *USER
-  - *EMAIL
+  - *TRENDING
+  # - *EMAIL
   - *PYTHON
   - *CLIENT_PROD

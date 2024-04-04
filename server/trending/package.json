@@ -1,0 +1,27 @@
+{
+  "name": "db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./src/index.js",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "compromise": "^14.13.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.0.1",
+    "migrate-mongo": "^11.0.0",
+    "mongoose": "^8.0.1",
+    "node-cache": "^5.1.2",
+    "nodemon": "^2.0.2",
+    "twit": "^2.2.11",
+    "validator": "^13.0.0"
+  }
+}
