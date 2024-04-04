@@ -1,0 +1,6 @@
+# Chart.yaml
+apiVersion: v2
+name: trustvote-helm-chart
+description: Helm chart for the entire trustvote
+type: application
+version: 0.1.0

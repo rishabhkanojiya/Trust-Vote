@@ -1,0 +1,192 @@
+apiVersion: skaffold/v4beta8
+kind: Config
+
+.COMMON_ARTIFACTS:
+  ARTIFACTS_DEFINITION:
+    - &MIGRATE
+      image: rishabh75/trustvote-internal-migration
+      context: ../../server/node
+      docker:
+        dockerfile: ../Dockerfiles/Dockerfile.migrate
+    - &USER
+      image: rishabh75/trustvote-user
+      context: ../../server/node
+      sync:
+        manual:
+          - src: src/**/*.js
+            dest: .
+      docker:
+        dockerfile: ../Dockerfiles/Dockerfile.main
+    - &VOTING
+      image: rishabh75/trustvote-python
+      context: ../../server/python
+      sync:
+        manual:
+          - src: ./**/*.py
+            dest: .
+      docker:
+        dockerfile: ../Dockerfiles/Dockerfile.python
+    - &EMAIL
+      image: rishabh75/trustvote-email
+      context: ../../server/node
+      sync:
+        manual:
+          - src: src/**/*.js
+            dest: .
+      docker:
+        dockerfile: ../Dockerfiles/Dockerfile.email
+    - &CRON
+      image: rishabh75/trustvote-email-cron
+      context: ../../server/node
+      sync:
+        manual:
+          - src: src/**/*.js
+            dest: .
+      docker:
+        dockerfile: ../Dockerfiles/Dockerfile.cron
+    - &CLIENT
+      image: rishabh75/trustvote-client
+      context: ../../client/
+      sync:
+        manual:
+          - src: src/**/*.js
+            dest: .
+      docker:
+        dockerfile: ../Dockerfiles/Dockerfile.client
+    - &CLIENT-PROD
+      image: rishabh75/trustvote-client-prod
+      context: ../../client/
+      sync:
+        manual:
+          - src: src/**/*.js
+            dest: .
+      docker:
+        dockerfile: ../Dockerfiles/Dockerfile.client-prod
+  COMMON_ARTIFACTSETS:
+    DEFAULT_ARTIFACTS: &DEFAULT_ARTIFACTS
+      - *MIGRATE
+      - *USER
+      - *VOTING
+      - *EMAIL
+      - *CRON
+      - *CLIENT
+    DEV_ARTIFACTS: &DEV_ARTIFACTS
+      - *MIGRATE
+      - *USER
+      - *VOTING
+      - *EMAIL
+      - *CRON
+      - *CLIENT
+    PROD_ARTIFACTS: &PROD_ARTIFACTS
+      - *MIGRATE
+      - *USER
+      - *VOTING
+      - *EMAIL
+      - *CRON
+      - *CLIENT-PROD
+
+.HOOKS: &HOOKS
+  - &DEV_HOOK
+    before:
+      - host:
+          command:
+            [
+              "sh",
+              "-c",
+              "cat ../helm/values.yaml ../helm/values/dev.yaml > generated.yaml",
+            ]
+    after:
+      - host:
+          command: ["sh", "-c", "rm generated.yaml"]
+  - &PROD_HOOK
+    before:
+      - host:
+          command:
+            [
+              "sh",
+              "-c",
+              "cat ../helm/values.yaml ../helm/values/prod.yaml > generated.yaml",
+            ]
+    after:
+      - host:
+          command: ["sh", "-c", "rm generated.yaml"]
+  - &SERVER_HOOK # Default Deployment
+    before:
+      - host:
+          command:
+            [
+              "sh",
+              "-c",
+              "cat ../helm/values.yaml ../helm/values/server.yaml > generated.yaml",
+            ]
+    after:
+      - host:
+          command: ["sh", "-c", "rm generated.yaml"]
+
+build: &DEFAULT_BUILD
+  local:
+    push: false
+  artifacts: *DEFAULT_ARTIFACTS
+deploy:
+  helm:
+    releases:
+      - name: trustvote-release
+        chartPath: ../helm/
+        createNamespace: true
+        valuesFiles:
+          - ../helm/values/values.dev.yaml
+
+profiles:
+  - name: dev
+    deploy:
+      helm:
+        releases:
+          - name: trustvote-dev-release
+            chartPath: ../helm/
+            namespace: trustvote-dev
+            createNamespace: true
+            valuesFiles:
+              - generated.yaml
+        hooks: *DEV_HOOK
+
+    build:
+      local:
+        push: false
+      artifacts: *DEV_ARTIFACTS
+
+  - name: prod
+    deploy:
+      helm:
+        releases:
+          - name: trustvote-prod-release
+            chartPath: ../helm/
+            namespace: trustvote-prod
+            createNamespace: true
+            valuesFiles:
+              - generated.yaml
+        hooks: *PROD_HOOK
+    build:
+      local:
+        push: false
+      tagPolicy:
+        gitCommit: {}
+        # dateTime: {}
+      artifacts: *PROD_ARTIFACTS
+
+  - name: server
+    deploy:
+      helm:
+        releases:
+          - name: trustvote-server-release
+            chartPath: ../helm/
+            namespace: trustvote-server
+            createNamespace: true
+            valuesFiles:
+              - generated.yaml
+        hooks: *SERVER_HOOK
+    build:
+      local:
+        push: false
+      tagPolicy:
+        gitCommit: {}
+      artifacts: *PROD_ARTIFACTS

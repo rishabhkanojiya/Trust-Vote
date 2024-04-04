@@ -1,0 +1,15 @@
+FROM node:16-alpine
+
+RUN mkdir /srv/fe-trustvote
+WORKDIR /srv/fe-trustvote
+
+COPY package.json .
+COPY package-lock.json .
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000 
+CMD ["sh", "-c", "npm run dev"]
+
+

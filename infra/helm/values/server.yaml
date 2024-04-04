@@ -1,0 +1,4 @@
+
+components: *PROD_COMPONENTS
+
+ingress: *SERVER_INGRESS
