@@ -43,7 +43,16 @@ def add_candidate():
 
         new_candidate = Candidate(name=data["name"], level=data["level"])
 
-        db.session.add(new_candidate)
+        db.session.add_all(
+            [
+                {"id": 1, "level": "1", "name": "country"},
+                {"id": 2, "level": "1", "name": "country1"},
+                {"id": 3, "level": "2", "name": "state"},
+                {"id": 4, "level": "2", "name": "state1"},
+                {"id": 5, "level": "3", "name": "city"},
+                {"id": 6, "level": "3", "name": "city1"},
+            ]
+        )
         db.session.commit()
 
         return (

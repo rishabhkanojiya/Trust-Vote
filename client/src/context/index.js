@@ -5,3 +5,6 @@ ShowPopupContext.displayName = "ShowPopupData";
 
 export const LoginContext = createContext(null);
 LoginContext.displayName = "LoginData";
+
+export const VoteContext = createContext(null);
+VoteContext.displayName = "VoteData";

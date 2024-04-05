@@ -3,14 +3,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { Route, useHistory } from "react-router-dom";
 import Loader from "../../components/Loader";
 import Navbar from "../../components/Navbar";
-import { LoginContext, ShowPopupContext } from "../../context";
+import { LoginContext, ShowPopupContext, VoteContext } from "../../context";
 import { Consume } from "../../context/Consumer";
 import { UserService } from "../../services/user.services";
+import { VoteService } from "../../services/vote.services";
 
 const AuthGuard = ({
     ShowPopupData,
     LoginData,
-
+    VoteData,
     component: Component,
     requiresAuth,
     ...rest
@@ -23,6 +24,10 @@ const AuthGuard = ({
             const userRes = await UserService.getUser();
 
             const user = await LoginData.setUserObj(userRes.data.user);
+
+            const vote = await VoteService.getCandidates();
+
+            await VoteData.setCandidateObj(vote.data);
         } catch (err) {
             history.push("/auth/login");
             ShowPopupData.setPopupMessageObj(err.response.data, "error");
@@ -64,4 +69,8 @@ const AuthGuard = ({
     );
 };
 
-export default Consume(AuthGuard, [ShowPopupContext, LoginContext]);
+export default Consume(AuthGuard, [
+    ShowPopupContext,
+    LoginContext,
+    VoteContext,
+]);

@@ -1,6 +1,6 @@
 import { values } from "lodash";
 import React, { useState } from "react";
-import { LoginContext, ShowPopupContext } from ".";
+import { LoginContext, ShowPopupContext, VoteContext } from ".";
 import { apiError, apiErrorAPi } from "../constant/errors";
 
 export const ShowPopupProvider = (props) => {
@@ -24,8 +24,11 @@ export const ShowPopupProvider = (props) => {
         setShowPopup(true);
         switch (state) {
             case "error":
+                console.log(res);
                 if (res?.meta?.errors) {
                     msg = values(res.meta.errors)[0];
+                } else if (typeof res == "string") {
+                    msg = res;
                 } else {
                     msg = apiErrorAPi(res);
                 }
@@ -84,5 +87,36 @@ export const LoginProvider = (props) => {
         >
             {props.children}
         </LoginContext.Provider>
+    );
+};
+
+export const VoteProvider = (props) => {
+    const [candidates, setCandidates] = useState();
+    const [candidate, setCandidate] = useState();
+
+    function setCandidateObj(candidates) {
+        const groupByCandidates = candidates.reduce((group, candidate) => {
+            const { level } = candidate;
+            group[level] = group[level] ?? [];
+            group[level].push(candidate);
+            return group;
+        }, {});
+
+        setCandidates(groupByCandidates);
+
+        return groupByCandidates;
+    }
+
+    return (
+        <VoteContext.Provider
+            value={{
+                data: candidates,
+                setCandidateObj,
+                candidate,
+                setCandidate,
+            }}
+        >
+            {props.children}
+        </VoteContext.Provider>
     );
 };

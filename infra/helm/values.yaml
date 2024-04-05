@@ -128,7 +128,8 @@ COMPONENT_DEFINITION:
     service:
       port: 3000
     env:
-      API_URL: "https://trustvote.app/api/user"
+      USER_API_URL: "https://trustvote.app/api/user"
+      VOTE_API_URL: "https://trustvote.app/api/voting"
       ENV: "development"
       PORT: 3000
   - &CLIENT_PROD

@@ -35,7 +35,7 @@ kind: Config
       context: ../../server/python
       sync:
         manual:
-          - src: ./**/*.py
+          - src: /**/*.py
             dest: .
       docker:
         dockerfile: ../Dockerfiles/Dockerfile.python

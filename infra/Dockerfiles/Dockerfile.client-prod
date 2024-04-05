@@ -5,7 +5,8 @@ WORKDIR /app
 COPY package*.json .
 RUN npm install
 COPY . .
-ENV API_URL=https://trustvote.app/api/user
+ENV USER_API_URL=https://trustvote.app/api/user
+ENV VOTE_API_URL=https://trustvote.app/api/Voting
 RUN npm run build
 
 # serve environment

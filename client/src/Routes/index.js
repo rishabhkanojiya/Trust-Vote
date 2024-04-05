@@ -1,7 +1,8 @@
 import React from "react";
 import { routesObj } from "../common/constants";
 
-const Home = React.lazy(() => import("../components/Home"));
+const CanInfo = React.lazy(() => import("../components/CanInfo"));
+const Vote = React.lazy(() => import("../components/Vote"));
 const User = React.lazy(() => import("../components/User"));
 const Auth = React.lazy(() => import("../components/Auth"));
 
@@ -14,7 +15,13 @@ const routes = [
     },
     {
         path: routesObj.home,
-        component: Home,
+        component: CanInfo,
+        requiresAuth: true,
+        exact: true,
+    },
+    {
+        path: routesObj.vote,
+        component: Vote,
         requiresAuth: true,
         exact: true,
     },

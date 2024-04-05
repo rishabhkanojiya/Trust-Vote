@@ -1,4 +1,5 @@
 const environment = {
-    API_URL: process.env.API_URL,
+    USER_API_URL: process.env.USER_API_URL,
+    VOTE_API_URL: process.env.VOTE_API_URL,
 };
 export default environment;
