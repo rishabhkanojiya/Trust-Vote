@@ -36,11 +36,12 @@ class Blockchain:
     def get_latest_block(self):
         return self.chain[-1]
 
-    def vote(self, voter_ssn, candidate_id):
-        vote = (voter_ssn, candidate_id)
+    def vote(self, voter_ssn, candidate_id, candidate_level):
+        vote = (voter_ssn, candidate_id, candidate_level)
 
         voter_has_voted = any(
-            vote == existing_vote
+            vote[0] == existing_vote[0]
+            and vote[2] == existing_vote[2]  # Checking SSN, candidate ID, and level
             for block in self.chain
             for existing_vote in block.votes
         )

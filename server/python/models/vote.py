@@ -14,5 +14,8 @@ class Candidate(db.Model):
             "level": self.level,
         }
 
+    def getLevel(self):
+        return self.level
+
     def __repr__(self):
         return f"<Candidate {self.name}>"

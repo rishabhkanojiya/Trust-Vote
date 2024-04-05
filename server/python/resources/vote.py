@@ -93,7 +93,9 @@ def add_vote():
             return jsonify({"error": "Invalid request data"}), 400
 
         if blockchain.vote(
-            hashlib.sha256(user.getSSN().encode()).hexdigest(), candidate_id
+            hashlib.sha256(user.getSSN().encode()).hexdigest(),
+            candidate_id,
+            candidate.getLevel(),
         ):
             return jsonify({"message": "Vote recorded successfully"}), 200
         else:
