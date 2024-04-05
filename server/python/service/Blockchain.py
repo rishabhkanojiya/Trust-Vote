@@ -70,11 +70,8 @@ class Blockchain:
 
     def get_candidate_vote_count(self, candidate_id):
         vote_count = 0
-        for block in self.chain:
-            print("block : ", block.votes)
-            for vote in block.votes:
-                print("vote : ", vote)
-                ssn, voted_candidate_id = vote
-                if voted_candidate_id == candidate_id:
-                    vote_count += 1
+        for vote in self.get_latest_block().votes:
+            ssn, voted_candidate_id = vote
+            if voted_candidate_id == candidate_id:
+                vote_count += 1
         return vote_count

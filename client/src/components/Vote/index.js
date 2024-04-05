@@ -1,13 +1,13 @@
-import React from "react";
-import { useForm, Controller } from "react-hook-form";
-import { Radio, RadioGroup, FormControlLabel, Button } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { Button, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { Box } from "@mui/system";
-import CandidateBox from "../Candidate/CandidateBox";
-import { Consume } from "../../context/Consumer";
-import { ShowPopupContext, VoteContext } from "../../context";
-import { VoteService } from "../../services/vote.services";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { ShowPopupContext } from "../../context";
+import { Consume } from "../../context/Consumer";
+import { VoteService } from "../../services/vote.services";
+import CandidateBox from "../Candidate/CandidateBox";
 
 const Vote = ({ ShowPopupData }) => {
     const { voteId } = useParams();
