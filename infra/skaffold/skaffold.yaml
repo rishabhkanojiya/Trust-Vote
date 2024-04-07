@@ -30,15 +30,6 @@ kind: Config
             dest: .
       docker:
         dockerfile: ../Dockerfiles/Dockerfile.main
-    - &VOTING
-      image: rishabh75/trustvote-python
-      context: ../../server/python
-      sync:
-        manual:
-          - src: /**/*.py
-            dest: .
-      docker:
-        dockerfile: ../Dockerfiles/Dockerfile.python
     - &EMAIL
       image: rishabh75/trustvote-email
       context: ../../server/node
@@ -75,6 +66,15 @@ kind: Config
             dest: .
       docker:
         dockerfile: ../Dockerfiles/Dockerfile.client-prod
+    - &VOTING
+      image: rishabh75/trustvote-python
+      context: ../../server/python
+      sync:
+        manual:
+          - src: /**/*.py
+            dest: .
+      docker:
+        dockerfile: ../Dockerfiles/Dockerfile.python
   COMMON_ARTIFACTSETS:
     DEFAULT_ARTIFACTS: &DEFAULT_ARTIFACTS
       - *MIGRATE
@@ -88,18 +88,18 @@ kind: Config
       - *MIGRATE
       - *USER
       - *TRENDING
-      - *VOTING
       # - *EMAIL
       # - *CRON
       - *CLIENT
+      - *VOTING
     PROD_ARTIFACTS: &PROD_ARTIFACTS
       - *MIGRATE
       - *USER
       - *TRENDING
-      - *VOTING
       # - *EMAIL
       # - *CRON
       - *CLIENT-PROD
+      - *VOTING
 
 .HOOKS: &HOOKS
   - &DEV_HOOK

@@ -5,6 +5,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ printf "%s-deployment" .name }}
+  # labels:
+    # app.kubernetes.io/managed-by: "Helm"
+  {{- if .hooks }}
+  annotations:
+    # helm.sh/release-name: "trustvote-dev-release"
+    # helm.sh/release-namespace: "trustvote-dev"
+    {{- range $key, $value := .hooks }}
+    {{ $key }}: "{{ $value }}"
+    {{- end }}
+  {{- end }}
 spec:
   replicas: {{ .replicaCount }}
   selector:
@@ -15,74 +25,6 @@ spec:
       labels:
         app: {{ .name }}
     spec:
-      {{- if .waitForMigration }}
-      # initContainers:
-      # - name: wait-for-job
-      #   image: busybox
-      #   command:
-      #   - /bin/sh
-      #   - -c
-      #   - |
-      #     POD_NAME=$(echo $HOSTNAME | cut -d'-' -f1-5)
-      #     while true; do
-      #       POD_STATUS=$(kubectl get job internal-migration-job -n trustvote-dev -o jsonpath={$.status.succeeded})
-      #       if [ "$POD_STATUS" == "1" ]; then
-      #         echo "Pod $POD_NAME is running!"
-      #         break
-      #       else
-      #         echo "Waiting for pod $POD_NAME to start..."
-      #         sleep 5
-      #       fi
-      #     done
-      # initContainers:
-      # - command:
-      #   - kubernetes-entrypoint
-      #   name: init-dependency-check
-      #   env:
-      #   - name: POD_NAME
-      #     valueFrom:
-      #       fieldRef:
-      #         apiVersion: v1
-      #         fieldPath: metadata.name
-      #   - name: NAMESPACE
-      #     valueFrom:
-      #       fieldRef:
-      #         apiVersion: v1
-      #         fieldPath: metadata.namespace
-      #   - name: DEPENDENCY_JOBS
-      #     value: internal-migration-job
-      #   - name: COMMAND
-      #     value: echo done
-      #   image: projects.registry.vmware.com/tcx/snapshot/stackanetes/kubernetes-entrypoint:latest
-      #   securityContext:
-      #     privileged: true
-      #     runAsUser: 0
-      # initContainers:
-      #   - name: wait-for-pg
-      #     image: busybox:latest
-      #     imagePullPolicy: IfNotPresent
-      #     command: ['sh', '-c', 'until nc -vz ${POD_NAME}.${POD_NAMESPACE} 5432; do echo "Waiting for postgres..."; sleep 3; done;']
-      #     env:
-      #       - name: POD_NAME
-      #         value: internal-migration-job
-      #       - name: POD_NAMESPACE
-      #         valueFrom:
-      #           fieldRef:
-      #             fieldPath: metadata.namespace
-      # initContainers:
-      #   - name: wait-for-job
-      #     image: busybox:latest
-      #     imagePullPolicy: IfNotPresent
-      #     # command: ['sh', '-c', 'kubectl wait --for=condition=complete --timeout=50s job/${POD_NAME} -n ${POD_NAMESPACE}']
-      #     command: ['sh', '-c', 'kubectl wait --for=condition=complete --timeout=1s internal-migration-job -n trustvote-dev']
-      #     env:
-      #       - name: POD_NAME
-      #         value: internal-migration-job
-      #       - name: POD_NAMESPACE
-      #         valueFrom:
-      #           fieldRef:
-      #             fieldPath: metadata.namespace
-      {{- end }}
       containers:
         - name: {{ .name }}
           image: "{{ .image.repository }}"
@@ -138,10 +80,18 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-    name: {{ printf "%s-job" .name }}
+  # labels:
+    # app.kubernetes.io/managed-by: Helm
+  name: {{ printf "%s-job" .name }}
+  {{- if .hooks }}
+  annotations:
+    # helm.sh/release-name: "trustvote-dev-release"
+    # helm.sh/release-namespace: "trustvote-dev"
+    {{- range $key, $value := .hooks }}
+    {{ $key }}: "{{ $value }}"
+    {{- end }}
+  {{- end }}
 spec:
-  completions: {{ .completions }}
-  backoffLimit: {{ .backoffLimit }}
   selector: {} # Ensure that the selector is auto-generated
   template:
     metadata:
@@ -151,7 +101,8 @@ spec:
       restartPolicy: Never
       containers:
         - name: {{ .name }}
-          image: {{ .image }}
+          image: "{{ .image.repository }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
           resources:
             requests:
               cpu: "{{ .resources.requests.cpu }}"
@@ -270,18 +221,18 @@ spec:
     {{- end }}
 
 
-# RBAC
+# # RBAC
 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  namespace: default
-  name: pod-reader
-rules:
-- apiGroups: [""]
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   namespace: default
+#   name: pod-reader
+# rules:
+# - apiGroups: [""]
 
-  resources: ["pods"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["batch"]
-  resources: ["jobs"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+#   resources: ["pods"]
+#   verbs: ["get", "list", "watch"]
+# - apiGroups: ["batch"]
+#   resources: ["jobs"]
+#   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
