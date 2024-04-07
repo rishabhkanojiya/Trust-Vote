@@ -5,12 +5,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ printf "%s-deployment" .name }}
-  # labels:
-    # app.kubernetes.io/managed-by: "Helm"
   {{- if .hooks }}
   annotations:
-    # helm.sh/release-name: "trustvote-dev-release"
-    # helm.sh/release-namespace: "trustvote-dev"
     {{- range $key, $value := .hooks }}
     {{ $key }}: "{{ $value }}"
     {{- end }}
@@ -80,13 +76,9 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  # labels:
-    # app.kubernetes.io/managed-by: Helm
   name: {{ printf "%s-job" .name }}
   {{- if .hooks }}
   annotations:
-    # helm.sh/release-name: "trustvote-dev-release"
-    # helm.sh/release-namespace: "trustvote-dev"
     {{- range $key, $value := .hooks }}
     {{ $key }}: "{{ $value }}"
     {{- end }}
